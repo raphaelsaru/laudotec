@@ -18,10 +18,110 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
     return valor || 'Não informado';
   };
 
-  const handleDownload = () => {
+  // Função para converter File para base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  // Componente para exibir imagem única
+  const ExibirImagemUnica = ({ file, titulo }: { file: File | null, titulo: string }) => {
+    if (!file) return null;
+    
+    return (
+      <div className="mt-2">
+        <p className="text-sm font-medium text-gray-700 mb-1">{titulo}:</p>
+        <img 
+          src={URL.createObjectURL(file)} 
+          alt={titulo}
+          className="max-w-xs h-auto rounded border border-gray-300"
+        />
+      </div>
+    );
+  };
+
+  // Componente para exibir múltiplas imagens
+  const ExibirImagensMultiplas = ({ files, titulo }: { files: File[], titulo: string }) => {
+    if (files.length === 0) return null;
+    
+    return (
+      <div className="mt-2">
+        <p className="text-sm font-medium text-gray-700 mb-2">{titulo}:</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {files.map((file, index) => (
+            <img 
+              key={index}
+              src={URL.createObjectURL(file)} 
+              alt={`${titulo} ${index + 1}`}
+              className="w-full h-32 object-cover rounded border border-gray-300"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const handleDownload = async () => {
     const elemento = document.getElementById('laudo-content');
     if (elemento) {
-      const conteudo = elemento.innerHTML;
+      // Converter todas as imagens para base64 para incluir no HTML
+      const imagensBase64: { [key: string]: string } = {};
+      
+      try {
+        // Converter imagens únicas
+        if (dados.fotoPainel) {
+          imagensBase64.fotoPainel = await fileToBase64(dados.fotoPainel);
+        }
+        if (dados.fotoChassi) {
+          imagensBase64.fotoChassi = await fileToBase64(dados.fotoChassi);
+        }
+        if (dados.fotoVeiculoSemFalha) {
+          imagensBase64.fotoVeiculoSemFalha = await fileToBase64(dados.fotoVeiculoSemFalha);
+        }
+        if (dados.fotoPecaCausadoraEtiqueta) {
+          imagensBase64.fotoPecaCausadoraEtiqueta = await fileToBase64(dados.fotoPecaCausadoraEtiqueta);
+        }
+
+        // Converter arrays de imagens
+        for (let i = 0; i < dados.fotoSintoma.length; i++) {
+          imagensBase64[`fotoSintoma_${i}`] = await fileToBase64(dados.fotoSintoma[i]);
+        }
+        
+        for (let i = 0; i < dados.fotosCausa.length; i++) {
+          imagensBase64[`fotosCausa_${i}`] = await fileToBase64(dados.fotosCausa[i]);
+        }
+
+        for (let passoIndex = 0; passoIndex < dados.passos.length; passoIndex++) {
+          for (let fotoIndex = 0; fotoIndex < dados.passos[passoIndex].fotos.length; fotoIndex++) {
+            imagensBase64[`passo_${passoIndex}_foto_${fotoIndex}`] = await fileToBase64(dados.passos[passoIndex].fotos[fotoIndex]);
+          }
+        }
+
+        for (let i = 0; i < dados.fotosPecasInstaladasEtiqueta.length; i++) {
+          imagensBase64[`fotosPecasInstaladasEtiqueta_${i}`] = await fileToBase64(dados.fotosPecasInstaladasEtiqueta[i]);
+        }
+
+        for (let i = 0; i < dados.fotosPecasAdicionais.length; i++) {
+          imagensBase64[`fotosPecasAdicionais_${i}`] = await fileToBase64(dados.fotosPecasAdicionais[i]);
+        }
+
+      } catch (error) {
+        console.error('Erro ao converter imagens:', error);
+      }
+
+      // Criar HTML com imagens em base64
+      let conteudoHtml = elemento.innerHTML;
+      
+      // Substituir URLs de objeto por base64
+      Object.entries(imagensBase64).forEach(([key, base64]) => {
+        const regex = new RegExp(`blob:[^"]*`, 'g');
+        conteudoHtml = conteudoHtml.replace(regex, base64);
+      });
+
       const blob = new Blob([`
         <!DOCTYPE html>
         <html>
@@ -39,10 +139,12 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
             .step { margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
             .step-title { font-weight: bold; color: #007bff; }
             .photo-info { color: #666; font-style: italic; }
+            img { max-width: 300px; height: auto; margin: 5px; border: 1px solid #ddd; border-radius: 5px; }
+            .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 10px 0; }
           </style>
         </head>
         <body>
-          ${conteudo}
+          ${conteudoHtml}
         </body>
         </html>
       `], { type: 'text/html' });
@@ -124,19 +226,9 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
           <h3 className="section-title text-lg font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
             FOTOS INICIAIS
           </h3>
-          <div className="space-y-2">
-            <div className="field">
-              <span className="field-label font-semibold">Foto do Painel de Instrumentos:</span>
-              <span className="photo-info ml-2 text-gray-600 italic">
-                {dados.fotoPainel ? `Arquivo: ${dados.fotoPainel.name}` : 'Não anexado'}
-              </span>
-            </div>
-            <div className="field">
-              <span className="field-label font-semibold">Foto do Chassi (VIN):</span>
-              <span className="photo-info ml-2 text-gray-600 italic">
-                {dados.fotoChassi ? `Arquivo: ${dados.fotoChassi.name}` : 'Não anexado'}
-              </span>
-            </div>
+          <div className="space-y-4">
+            <ExibirImagemUnica file={dados.fotoPainel} titulo="Foto do Painel de Instrumentos" />
+            <ExibirImagemUnica file={dados.fotoChassi} titulo="Foto do Chassi (VIN)" />
           </div>
         </div>
 
@@ -151,14 +243,7 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
               {dados.reclamacaoDescricao || 'Não informado'}
             </div>
           </div>
-          <div className="field">
-            <span className="field-label font-semibold">Fotos do Sintoma:</span>
-            <span className="photo-info ml-2 text-gray-600 italic">
-              {dados.fotoSintoma.length > 0 
-                ? `${dados.fotoSintoma.length} arquivo(s) anexado(s)` 
-                : 'Nenhum arquivo anexado'}
-            </span>
-          </div>
+          <ExibirImagensMultiplas files={dados.fotoSintoma} titulo="Fotos do Sintoma" />
         </div>
 
         {/* Método de Diagnóstico */}
@@ -175,14 +260,7 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
                   {passo.descricao || 'Não informado'}
                 </div>
               </div>
-              <div className="field">
-                <span className="field-label font-semibold">Fotos:</span>
-                <span className="photo-info ml-2 text-gray-600 italic">
-                  {passo.fotos.length > 0 
-                    ? `${passo.fotos.length} arquivo(s) anexado(s)` 
-                    : 'Nenhum arquivo anexado'}
-                </span>
-              </div>
+              <ExibirImagensMultiplas files={passo.fotos} titulo={`Fotos do Passo ${index + 1}`} />
             </div>
           ))}
         </div>
@@ -198,15 +276,8 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
               {dados.causaDescricao || 'Não informado'}
             </div>
           </div>
-          <div className="field mb-3">
-            <span className="field-label font-semibold">Fotos da Causa:</span>
-            <span className="photo-info ml-2 text-gray-600 italic">
-              {dados.fotosCausa.length > 0 
-                ? `${dados.fotosCausa.length} arquivo(s) anexado(s)` 
-                : 'Nenhum arquivo anexado'}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ExibirImagensMultiplas files={dados.fotosCausa} titulo="Fotos da Causa" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div className="field">
               <span className="field-label font-semibold">Número da Peça Causadora:</span>
               <span className="field-value ml-2">{dados.numeroPecaCausadora}</span>
@@ -236,35 +307,11 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
           <h3 className="section-title text-lg font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">
             FOTOS FINAIS
           </h3>
-          <div className="space-y-2">
-            <div className="field">
-              <span className="field-label font-semibold">Veículo sem falha:</span>
-              <span className="photo-info ml-2 text-gray-600 italic">
-                {dados.fotoVeiculoSemFalha ? `Arquivo: ${dados.fotoVeiculoSemFalha.name}` : 'Não anexado'}
-              </span>
-            </div>
-            <div className="field">
-              <span className="field-label font-semibold">Peça Causadora com Etiqueta:</span>
-              <span className="photo-info ml-2 text-gray-600 italic">
-                {dados.fotoPecaCausadoraEtiqueta ? `Arquivo: ${dados.fotoPecaCausadoraEtiqueta.name}` : 'Não anexado'}
-              </span>
-            </div>
-            <div className="field">
-              <span className="field-label font-semibold">Peças Instaladas com etiqueta:</span>
-              <span className="photo-info ml-2 text-gray-600 italic">
-                {dados.fotosPecasInstaladasEtiqueta.length > 0 
-                  ? `${dados.fotosPecasInstaladasEtiqueta.length} arquivo(s) anexado(s)` 
-                  : 'Nenhum arquivo anexado'}
-              </span>
-            </div>
-            <div className="field">
-              <span className="field-label font-semibold">Peças adicionais:</span>
-              <span className="photo-info ml-2 text-gray-600 italic">
-                {dados.fotosPecasAdicionais.length > 0 
-                  ? `${dados.fotosPecasAdicionais.length} arquivo(s) anexado(s)` 
-                  : 'Nenhum arquivo anexado'}
-              </span>
-            </div>
+          <div className="space-y-4">
+            <ExibirImagemUnica file={dados.fotoVeiculoSemFalha} titulo="Veículo sem falha" />
+            <ExibirImagemUnica file={dados.fotoPecaCausadoraEtiqueta} titulo="Peça Causadora com Etiqueta" />
+            <ExibirImagensMultiplas files={dados.fotosPecasInstaladasEtiqueta} titulo="Peças Instaladas com etiqueta" />
+            <ExibirImagensMultiplas files={dados.fotosPecasAdicionais} titulo="Peças adicionais" />
           </div>
         </div>
 

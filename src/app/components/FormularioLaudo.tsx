@@ -81,6 +81,59 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
     return dados.chassi && dados.numeroOS && dados.numeroPecaCausadora && dados.descricaoPecaCausadora;
   };
 
+  // Função para criar URL de preview da imagem
+  const criarUrlPreview = (file: File) => {
+    return URL.createObjectURL(file);
+  };
+
+  // Componente para preview de imagem única
+  const PreviewImagemUnica = ({ file, onRemover }: { file: File | null, onRemover: () => void }) => {
+    if (!file) return null;
+    
+    return (
+      <div className="mt-2 relative inline-block">
+        <img 
+          src={criarUrlPreview(file)} 
+          alt="Preview" 
+          className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+        />
+        <button
+          type="button"
+          onClick={onRemover}
+          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+        >
+          ×
+        </button>
+      </div>
+    );
+  };
+
+  // Componente para preview de múltiplas imagens
+  const PreviewImagensMultiplas = ({ files, onRemover }: { files: File[], onRemover: (index: number) => void }) => {
+    if (files.length === 0) return null;
+    
+    return (
+      <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2">
+        {files.map((file, index) => (
+          <div key={index} className="relative">
+            <img 
+              src={criarUrlPreview(file)} 
+              alt={`Preview ${index + 1}`} 
+              className="w-24 h-24 object-cover rounded-lg border border-gray-300"
+            />
+            <button
+              type="button"
+              onClick={() => onRemover(index)}
+              className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Identificação */}
@@ -95,7 +148,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="text"
               value={dados.chassi}
               onChange={(e) => handleInputChange('chassi', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
               required
             />
           </div>
@@ -108,7 +161,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="text"
               value={dados.numeroOS}
               onChange={(e) => handleInputChange('numeroOS', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
               required
             />
           </div>
@@ -121,7 +174,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="text"
               value={dados.prmsNumero}
               onChange={(e) => handleInputChange('prmsNumero', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             />
           </div>
           
@@ -132,7 +185,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <select
               value={dados.veiculoModificado}
               onChange={(e) => handleInputChange('veiculoModificado', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             >
               <option value="">Selecione</option>
               <option value="sim">Sim</option>
@@ -147,7 +200,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <select
               value={dados.blockFlagAtivado}
               onChange={(e) => handleInputChange('blockFlagAtivado', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             >
               <option value="">Selecione</option>
               <option value="sim">Sim</option>
@@ -162,7 +215,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <select
               value={dados.abertoPRMS}
               onChange={(e) => handleInputChange('abertoPRMS', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             >
               <option value="">Selecione</option>
               <option value="sim">Sim</option>
@@ -184,7 +237,11 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange('fotoPainel', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagemUnica 
+              file={dados.fotoPainel} 
+              onRemover={() => handleInputChange('fotoPainel', null)}
             />
           </div>
           
@@ -196,7 +253,11 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange('fotoChassi', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagemUnica 
+              file={dados.fotoChassi} 
+              onRemover={() => handleInputChange('fotoChassi', null)}
             />
           </div>
         </div>
@@ -214,7 +275,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               value={dados.reclamacaoDescricao}
               onChange={(e) => handleInputChange('reclamacaoDescricao', e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             />
           </div>
           
@@ -227,7 +288,14 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               accept="image/*"
               multiple
               onChange={(e) => handleFileChange('fotoSintoma', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagensMultiplas 
+              files={dados.fotoSintoma} 
+              onRemover={(index) => {
+                const novasfotos = dados.fotoSintoma.filter((_, i) => i !== index);
+                handleInputChange('fotoSintoma', novasfotos);
+              }}
             />
           </div>
         </div>
@@ -260,7 +328,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
                   value={passo.descricao}
                   onChange={(e) => atualizarPasso(index, 'descricao', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
                 />
               </div>
               
@@ -273,7 +341,14 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
                   accept="image/*"
                   multiple
                   onChange={(e) => atualizarPasso(index, 'fotos', Array.from(e.target.files || []))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                />
+                <PreviewImagensMultiplas 
+                  files={passo.fotos} 
+                  onRemover={(fotoIndex) => {
+                    const novasFotos = passo.fotos.filter((_, i) => i !== fotoIndex);
+                    atualizarPasso(index, 'fotos', novasFotos);
+                  }}
                 />
               </div>
             </div>
@@ -303,7 +378,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               value={dados.causaDescricao}
               onChange={(e) => handleInputChange('causaDescricao', e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             />
           </div>
           
@@ -316,7 +391,14 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               accept="image/*"
               multiple
               onChange={(e) => handleFileChange('fotosCausa', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagensMultiplas 
+              files={dados.fotosCausa} 
+              onRemover={(index) => {
+                const novasfotos = dados.fotosCausa.filter((_, i) => i !== index);
+                handleInputChange('fotosCausa', novasfotos);
+              }}
             />
           </div>
           
@@ -329,7 +411,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
                 type="text"
                 value={dados.numeroPecaCausadora}
                 onChange={(e) => handleInputChange('numeroPecaCausadora', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
                 required
               />
             </div>
@@ -342,7 +424,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
                 type="text"
                 value={dados.descricaoPecaCausadora}
                 onChange={(e) => handleInputChange('descricaoPecaCausadora', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
                 required
               />
             </div>
@@ -361,7 +443,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             value={dados.correcaoDescricao}
             onChange={(e) => handleInputChange('correcaoDescricao', e.target.value)}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
           />
         </div>
       </div>
@@ -378,7 +460,11 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange('fotoVeiculoSemFalha', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagemUnica 
+              file={dados.fotoVeiculoSemFalha} 
+              onRemover={() => handleInputChange('fotoVeiculoSemFalha', null)}
             />
           </div>
           
@@ -390,7 +476,11 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange('fotoPecaCausadoraEtiqueta', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagemUnica 
+              file={dados.fotoPecaCausadoraEtiqueta} 
+              onRemover={() => handleInputChange('fotoPecaCausadoraEtiqueta', null)}
             />
           </div>
           
@@ -403,7 +493,14 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               accept="image/*"
               multiple
               onChange={(e) => handleFileChange('fotosPecasInstaladasEtiqueta', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagensMultiplas 
+              files={dados.fotosPecasInstaladasEtiqueta} 
+              onRemover={(index) => {
+                const novasfotos = dados.fotosPecasInstaladasEtiqueta.filter((_, i) => i !== index);
+                handleInputChange('fotosPecasInstaladasEtiqueta', novasfotos);
+              }}
             />
           </div>
           
@@ -416,7 +513,14 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
               accept="image/*"
               multiple
               onChange={(e) => handleFileChange('fotosPecasAdicionais', e.target.files)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            <PreviewImagensMultiplas 
+              files={dados.fotosPecasAdicionais} 
+              onRemover={(index) => {
+                const novasfotos = dados.fotosPecasAdicionais.filter((_, i) => i !== index);
+                handleInputChange('fotosPecasAdicionais', novasfotos);
+              }}
             />
           </div>
         </div>
