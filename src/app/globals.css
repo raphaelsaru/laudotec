@@ -27,44 +27,65 @@ body {
 
 /* Estilos específicos para impressão/PDF */
 @media print {
+  /* Remover margens padrão do navegador */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
   /* Ocultar elementos que não devem aparecer na impressão */
   .print\\:hidden {
     display: none !important;
   }
   
-  /* Configurações gerais da página */
+  /* Esconder cabeçalho e rodapé do navegador */
   @page {
-    margin: 1cm;
+    margin: 1.5cm 1cm 1cm 1cm;
     size: A4;
   }
   
-  /* Forçar cores de texto para impressão */
+  /* Esconder elementos do topo da página */
+  body::before,
+  body::after {
+    display: none !important;
+  }
+  
+  /* Remover qualquer padding/margin do body */
   body {
     background: white !important;
     color: #1f2937 !important;
-    font-size: 12pt;
-    line-height: 1.4;
+    font-size: 11pt !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
-  /* Garantir que o conteúdo do laudo seja visível */
+  /* Container principal do laudo */
   #laudo-content {
     background: white !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
   }
   
-  /* Estilos para o cabeçalho com logos */
+  /* Estilos para o cabeçalho com logos - ajustado para margens */
   .header {
-    margin-bottom: 20pt;
-    border-bottom: 2pt solid #333 !important;
-    padding-bottom: 15pt;
+    margin-top: 0 !important;
+    margin-bottom: 15pt !important;
+    border-bottom: 1.5pt solid #333 !important;
+    padding-bottom: 10pt !important;
+    page-break-inside: avoid !important;
   }
   
-  /* Garantir que os logos apareçam na impressão */
+  /* Garantir que os logos apareçam na impressão com tamanho adequado */
   .header img {
-    max-height: 60pt !important;
+    max-height: 50pt !important;
+    max-width: 120pt !important;
     width: auto !important;
+    height: auto !important;
     object-fit: contain !important;
   }
   
@@ -93,60 +114,88 @@ body {
     text-align: center !important;
   }
   
+  /* Títulos do cabeçalho */
+  .header h1 {
+    font-size: 18pt !important;
+    font-weight: bold !important;
+    color: #1f2937 !important;
+    margin: 0 !important;
+    padding: 0 5pt !important;
+  }
+  
+  .header h2 {
+    font-size: 12pt !important;
+    font-weight: normal !important;
+    color: #1f2937 !important;
+    margin: 5pt 0 0 0 !important;
+    padding: 0 5pt !important;
+  }
+  
+  .header p {
+    font-size: 10pt !important;
+    color: #1f2937 !important;
+    margin: 5pt 0 0 0 !important;
+  }
+  
   /* Estilos para títulos e seções */
   .section-title {
     color: #1f2937 !important;
-    font-size: 14pt !important;
+    font-size: 13pt !important;
     font-weight: bold !important;
-    margin-top: 20pt;
-    margin-bottom: 10pt;
+    margin-top: 15pt !important;
+    margin-bottom: 8pt !important;
     border-left: 3pt solid #007bff !important;
-    padding-left: 8pt;
+    padding-left: 6pt !important;
+    page-break-after: avoid !important;
   }
   
   /* Estilos para campos */
   .field-label {
     color: #1f2937 !important;
     font-weight: bold !important;
+    font-size: 10pt !important;
   }
   
   .field-value {
     color: #1f2937 !important;
+    font-size: 10pt !important;
   }
   
   /* Estilos para imagens do conteúdo */
   .section img {
-    max-width: 200pt !important;
+    max-width: 150pt !important;
     height: auto !important;
-    page-break-inside: avoid;
-    margin: 5pt;
-    border: 1pt solid #ddd !important;
+    page-break-inside: avoid !important;
+    margin: 3pt !important;
+    border: 0.5pt solid #ddd !important;
   }
   
   /* Evitar quebras de página em elementos importantes */
   .section, .step, .field {
-    page-break-inside: avoid;
-    break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
   
   /* Estilos para passos do diagnóstico */
   .step {
     background: #f8f9fa !important;
-    border: 1pt solid #ddd !important;
-    padding: 8pt !important;
-    margin-bottom: 10pt;
+    border: 0.5pt solid #ddd !important;
+    padding: 6pt !important;
+    margin-bottom: 8pt !important;
+    page-break-inside: avoid !important;
   }
   
   .step-title {
     color: #007bff !important;
     font-weight: bold !important;
+    font-size: 11pt !important;
   }
   
   /* Estilos para áreas de texto */
   .bg-gray-50 {
     background: #f8f9fa !important;
-    border: 1pt solid #ddd !important;
-    padding: 8pt !important;
+    border: 0.5pt solid #ddd !important;
+    padding: 6pt !important;
   }
   
   /* Grid para impressão */
@@ -155,9 +204,26 @@ body {
   }
   
   .grid > div {
-    display: inline-block;
-    width: 48%;
-    margin-right: 2%;
-    vertical-align: top;
+    display: inline-block !important;
+    width: 48% !important;
+    margin-right: 2% !important;
+    vertical-align: top !important;
+    margin-bottom: 5pt !important;
+  }
+  
+  /* Garantir que o conteúdo não saia das margens */
+  .section {
+    margin-bottom: 12pt !important;
+  }
+  
+  /* Estilos específicos para o container de logos */
+  .header .flex {
+    align-items: flex-start !important;
+    gap: 5pt !important;
+  }
+  
+  /* Ajustar espaçamento do título central */
+  .header .flex-1 {
+    padding: 0 10pt !important;
   }
 }
