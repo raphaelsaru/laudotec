@@ -18,16 +18,6 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
     return valor || 'Não informado';
   };
 
-  // Função para converter File para base64
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
-
   // Componente para exibir imagem única
   const ExibirImagemUnica = ({ file, titulo }: { file: File | null, titulo: string }) => {
     if (!file) return null;
@@ -65,111 +55,24 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
     );
   };
 
-  const handleDownload = async () => {
-    const elemento = document.getElementById('laudo-content');
-    if (elemento) {
-      // Converter todas as imagens para base64 para incluir no HTML
-      const imagensBase64: { [key: string]: string } = {};
-      
-      try {
-        // Converter imagens únicas
-        if (dados.fotoPainel) {
-          imagensBase64.fotoPainel = await fileToBase64(dados.fotoPainel);
-        }
-        if (dados.fotoChassi) {
-          imagensBase64.fotoChassi = await fileToBase64(dados.fotoChassi);
-        }
-        if (dados.fotoVeiculoSemFalha) {
-          imagensBase64.fotoVeiculoSemFalha = await fileToBase64(dados.fotoVeiculoSemFalha);
-        }
-        if (dados.fotoPecaCausadoraEtiqueta) {
-          imagensBase64.fotoPecaCausadoraEtiqueta = await fileToBase64(dados.fotoPecaCausadoraEtiqueta);
-        }
-
-        // Converter arrays de imagens
-        for (let i = 0; i < dados.fotoSintoma.length; i++) {
-          imagensBase64[`fotoSintoma_${i}`] = await fileToBase64(dados.fotoSintoma[i]);
-        }
-        
-        for (let i = 0; i < dados.fotosCausa.length; i++) {
-          imagensBase64[`fotosCausa_${i}`] = await fileToBase64(dados.fotosCausa[i]);
-        }
-
-        for (let passoIndex = 0; passoIndex < dados.passos.length; passoIndex++) {
-          for (let fotoIndex = 0; fotoIndex < dados.passos[passoIndex].fotos.length; fotoIndex++) {
-            imagensBase64[`passo_${passoIndex}_foto_${fotoIndex}`] = await fileToBase64(dados.passos[passoIndex].fotos[fotoIndex]);
-          }
-        }
-
-        for (let i = 0; i < dados.fotosPecasInstaladasEtiqueta.length; i++) {
-          imagensBase64[`fotosPecasInstaladasEtiqueta_${i}`] = await fileToBase64(dados.fotosPecasInstaladasEtiqueta[i]);
-        }
-
-        for (let i = 0; i < dados.fotosPecasAdicionais.length; i++) {
-          imagensBase64[`fotosPecasAdicionais_${i}`] = await fileToBase64(dados.fotosPecasAdicionais[i]);
-        }
-
-      } catch (error) {
-        console.error('Erro ao converter imagens:', error);
-      }
-
-      // Criar HTML com imagens em base64
-      let conteudoHtml = elemento.innerHTML;
-      
-      // Substituir URLs de objeto por base64
-      Object.entries(imagensBase64).forEach(([key, base64]) => {
-        const regex = new RegExp(`blob:[^"]*`, 'g');
-        conteudoHtml = conteudoHtml.replace(regex, base64);
-      });
-
-      const blob = new Blob([`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>${gerarNomeLaudo()}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; color: #1f2937; }
-            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
-            .section { margin-bottom: 25px; }
-            .section-title { font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 10px; border-left: 4px solid #007bff; padding-left: 10px; }
-            .field { margin-bottom: 8px; }
-            .field-label { font-weight: bold; color: #1f2937; }
-            .field-value { margin-left: 10px; color: #1f2937; }
-            .step { margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
-            .step-title { font-weight: bold; color: #007bff; }
-            .photo-info { color: #1f2937; font-style: italic; }
-            img { max-width: 300px; height: auto; margin: 5px; border: 1px solid #ddd; border-radius: 5px; }
-            .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 10px 0; }
-          </style>
-        </head>
-        <body>
-          ${conteudoHtml}
-        </body>
-        </html>
-      `], { type: 'text/html' });
-      
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${gerarNomeLaudo()}.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+  const handleSalvarPDF = () => {
+    // Definir o título do documento para aparecer na caixa de diálogo
+    document.title = gerarNomeLaudo();
+    
+    // Abrir a caixa de diálogo de impressão (que permite salvar como PDF)
+    window.print();
   };
 
   return (
     <div className="bg-white">
-      <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-lg">
+      <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-lg print:hidden">
         <h2 className="text-2xl font-bold text-gray-900">Laudo Técnico Gerado</h2>
         <div className="space-x-3">
           <button
-            onClick={handleDownload}
+            onClick={handleSalvarPDF}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Download HTML
+            Salvar como PDF
           </button>
           <button
             onClick={onVoltar}
