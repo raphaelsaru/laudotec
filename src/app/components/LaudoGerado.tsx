@@ -1,6 +1,7 @@
 'use client';
 
 import { DadosLaudo } from '../page';
+import Image from 'next/image';
 
 interface Props {
   dados: DadosLaudo;
@@ -25,10 +26,13 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
     return (
       <div className="mt-2">
         <p className="text-sm font-medium text-gray-800 mb-1">{titulo}:</p>
-        <img 
+        <Image 
           src={URL.createObjectURL(file)} 
           alt={titulo}
+          width={300}
+          height={200}
           className="max-w-xs h-auto rounded border border-gray-300"
+          unoptimized
         />
       </div>
     );
@@ -43,11 +47,14 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
         <p className="text-sm font-medium text-gray-800 mb-2">{titulo}:</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {files.map((file, index) => (
-            <img 
+            <Image 
               key={index}
               src={URL.createObjectURL(file)} 
               alt={`${titulo} ${index + 1}`}
+              width={200}
+              height={128}
               className="w-full h-32 object-cover rounded border border-gray-300"
+              unoptimized
             />
           ))}
         </div>

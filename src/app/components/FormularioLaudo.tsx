@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { DadosLaudo } from '../page';
+import Image from 'next/image';
 
 interface Props {
   onGerarLaudo: (dados: DadosLaudo) => void;
@@ -31,7 +32,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
     fotosPecasAdicionais: [],
   });
 
-  const handleInputChange = (field: keyof DadosLaudo, value: any) => {
+  const handleInputChange = (field: keyof DadosLaudo, value: string | File | File[] | null) => {
     setDados(prev => ({ ...prev, [field]: value }));
   };
 
@@ -63,7 +64,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
     }
   };
 
-  const atualizarPasso = (index: number, campo: 'descricao' | 'fotos', valor: any) => {
+  const atualizarPasso = (index: number, campo: 'descricao' | 'fotos', valor: string | File[]) => {
     setDados(prev => ({
       ...prev,
       passos: prev.passos.map((passo, i) => 
@@ -92,10 +93,13 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
     
     return (
       <div className="mt-2 relative inline-block">
-        <img 
+        <Image 
           src={criarUrlPreview(file)} 
           alt="Preview" 
+          width={128}
+          height={128}
           className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+          unoptimized
         />
         <button
           type="button"
@@ -116,10 +120,13 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
       <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2">
         {files.map((file, index) => (
           <div key={index} className="relative">
-            <img 
+            <Image 
               src={criarUrlPreview(file)} 
               alt={`Preview ${index + 1}`} 
+              width={96}
+              height={96}
               className="w-24 h-24 object-cover rounded-lg border border-gray-300"
+              unoptimized
             />
             <button
               type="button"
@@ -269,19 +276,20 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descrição
+              Descrição da Reclamação
             </label>
             <textarea
               value={dados.reclamacaoDescricao}
               onChange={(e) => handleInputChange('reclamacaoDescricao', e.target.value)}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+              placeholder="Descreva a reclamação do cliente..."
             />
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Foto(s) do Sintoma
+              Fotos do Sintoma
             </label>
             <input
               type="file"
@@ -293,8 +301,8 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <PreviewImagensMultiplas 
               files={dados.fotoSintoma} 
               onRemover={(index) => {
-                const novasfotos = dados.fotoSintoma.filter((_, i) => i !== index);
-                handleInputChange('fotoSintoma', novasfotos);
+                const novasFotos = dados.fotoSintoma.filter((_, i) => i !== index);
+                handleInputChange('fotoSintoma', novasFotos);
               }}
             />
           </div>
@@ -307,7 +315,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
         {dados.passos.map((passo, index) => (
           <div key={index} className="mb-6 p-4 border border-gray-200 rounded-lg">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-medium text-gray-900">Passo {index + 1}</h3>
+              <h3 className="text-lg font-medium text-gray-800">Passo {index + 1}</h3>
               {dados.passos.length > 1 && (
                 <button
                   type="button"
@@ -322,25 +330,30 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descrição
+                  Descrição do Passo
                 </label>
                 <textarea
                   value={passo.descricao}
                   onChange={(e) => atualizarPasso(index, 'descricao', e.target.value)}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                  placeholder="Descreva o passo do diagnóstico..."
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Foto(s) do Passo
+                  Fotos do Passo
                 </label>
                 <input
                   type="file"
                   accept="image/*"
                   multiple
-                  onChange={(e) => atualizarPasso(index, 'fotos', Array.from(e.target.files || []))}
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      atualizarPasso(index, 'fotos', Array.from(e.target.files));
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
                 />
                 <PreviewImagensMultiplas 
@@ -359,7 +372,7 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
           <button
             type="button"
             onClick={adicionarPasso}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700"
           >
             + Adicionar Passo
           </button>
@@ -372,19 +385,20 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descrição
+              Descrição da Causa
             </label>
             <textarea
               value={dados.causaDescricao}
               onChange={(e) => handleInputChange('causaDescricao', e.target.value)}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+              placeholder="Descreva a causa do problema..."
             />
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Foto(s) da Causa
+              Fotos da Causa
             </label>
             <input
               type="file"
@@ -396,8 +410,8 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <PreviewImagensMultiplas 
               files={dados.fotosCausa} 
               onRemover={(index) => {
-                const novasfotos = dados.fotosCausa.filter((_, i) => i !== index);
-                handleInputChange('fotosCausa', novasfotos);
+                const novasFotos = dados.fotosCausa.filter((_, i) => i !== index);
+                handleInputChange('fotosCausa', novasFotos);
               }}
             />
           </div>
@@ -437,13 +451,14 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
         <h2 className="text-xl font-semibold mb-4 text-gray-900">Correção</h2>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Descrição
+            Descrição da Correção
           </label>
           <textarea
             value={dados.correcaoDescricao}
             onChange={(e) => handleInputChange('correcaoDescricao', e.target.value)}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            placeholder="Descreva a correção aplicada..."
           />
         </div>
       </div>
@@ -498,8 +513,8 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <PreviewImagensMultiplas 
               files={dados.fotosPecasInstaladasEtiqueta} 
               onRemover={(index) => {
-                const novasfotos = dados.fotosPecasInstaladasEtiqueta.filter((_, i) => i !== index);
-                handleInputChange('fotosPecasInstaladasEtiqueta', novasfotos);
+                const novasFotos = dados.fotosPecasInstaladasEtiqueta.filter((_, i) => i !== index);
+                handleInputChange('fotosPecasInstaladasEtiqueta', novasFotos);
               }}
             />
           </div>
@@ -518,20 +533,20 @@ export function FormularioLaudo({ onGerarLaudo }: Props) {
             <PreviewImagensMultiplas 
               files={dados.fotosPecasAdicionais} 
               onRemover={(index) => {
-                const novasfotos = dados.fotosPecasAdicionais.filter((_, i) => i !== index);
-                handleInputChange('fotosPecasAdicionais', novasfotos);
+                const novasFotos = dados.fotosPecasAdicionais.filter((_, i) => i !== index);
+                handleInputChange('fotosPecasAdicionais', novasFotos);
               }}
             />
           </div>
         </div>
       </div>
 
-      {/* Botão Gerar Laudo */}
+      {/* Botão de Gerar Laudo */}
       <div className="flex justify-center">
         <button
           type="submit"
           disabled={!validarFormulario()}
-          className="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-medium"
         >
           Gerar Laudo
         </button>
