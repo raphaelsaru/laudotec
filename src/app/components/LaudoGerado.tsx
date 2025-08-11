@@ -34,7 +34,7 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
     
     return (
       <div className="mt-2">
-        <p className="text-sm font-medium text-gray-700 mb-1">{titulo}:</p>
+        <p className="text-sm font-medium text-gray-800 mb-1">{titulo}:</p>
         <img 
           src={URL.createObjectURL(file)} 
           alt={titulo}
@@ -50,7 +50,7 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
     
     return (
       <div className="mt-2">
-        <p className="text-sm font-medium text-gray-700 mb-2">{titulo}:</p>
+        <p className="text-sm font-medium text-gray-800 mb-2">{titulo}:</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {files.map((file, index) => (
             <img 
@@ -129,16 +129,16 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
           <meta charset="UTF-8">
           <title>${gerarNomeLaudo()}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; color: #1f2937; }
             .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
             .section { margin-bottom: 25px; }
-            .section-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; border-left: 4px solid #007bff; padding-left: 10px; }
+            .section-title { font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 10px; border-left: 4px solid #007bff; padding-left: 10px; }
             .field { margin-bottom: 8px; }
-            .field-label { font-weight: bold; color: #555; }
-            .field-value { margin-left: 10px; }
+            .field-label { font-weight: bold; color: #1f2937; }
+            .field-value { margin-left: 10px; color: #1f2937; }
             .step { margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
             .step-title { font-weight: bold; color: #007bff; }
-            .photo-info { color: #666; font-style: italic; }
+            .photo-info { color: #1f2937; font-style: italic; }
             img { max-width: 300px; height: auto; margin: 5px; border: 1px solid #ddd; border-radius: 5px; }
             .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 10px 0; }
           </style>
@@ -183,9 +183,9 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
       <div id="laudo-content" className="p-8 bg-white border border-gray-200 rounded-lg">
         {/* Cabeçalho */}
         <div className="header text-center mb-8 pb-6 border-b-2 border-gray-300">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">LAUDO TÉCNICO</h1>
-          <h2 className="text-xl text-gray-700">{gerarNomeLaudo()}</h2>
-          <p className="text-gray-600 mt-2">Data de Geração: {new Date().toLocaleDateString('pt-BR')}</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">LAUDO TÉCNICO</h1>
+          <h2 className="text-xl text-gray-800">{gerarNomeLaudo()}</h2>
+          <p className="text-gray-800 mt-2">Data de Geração: {new Date().toLocaleDateString('pt-BR')}</p>
         </div>
 
         {/* Identificação */}
@@ -195,28 +195,28 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="field">
-              <span className="field-label font-semibold">Chassi (VIN):</span>
-              <span className="field-value ml-2">{dados.chassi}</span>
+              <span className="field-label font-semibold text-gray-800">Chassi (VIN):</span>
+              <span className="field-value ml-2 text-gray-800">{dados.chassi}</span>
             </div>
             <div className="field">
-              <span className="field-label font-semibold">Número da OS:</span>
-              <span className="field-value ml-2">{dados.numeroOS}</span>
+              <span className="field-label font-semibold text-gray-800">Número da OS:</span>
+              <span className="field-value ml-2 text-gray-800">{dados.numeroOS}</span>
             </div>
             <div className="field">
-              <span className="field-label font-semibold">PRMS Nº:</span>
-              <span className="field-value ml-2">{formatarResposta(dados.prmsNumero)}</span>
+              <span className="field-label font-semibold text-gray-800">PRMS Nº:</span>
+              <span className="field-value ml-2 text-gray-800">{formatarResposta(dados.prmsNumero)}</span>
             </div>
             <div className="field">
-              <span className="field-label font-semibold">Veículo Modificado:</span>
-              <span className="field-value ml-2">{formatarResposta(dados.veiculoModificado)}</span>
+              <span className="field-label font-semibold text-gray-800">Veículo Modificado:</span>
+              <span className="field-value ml-2 text-gray-800">{formatarResposta(dados.veiculoModificado)}</span>
             </div>
             <div className="field">
-              <span className="field-label font-semibold">Block Flag Ativado:</span>
-              <span className="field-value ml-2">{formatarResposta(dados.blockFlagAtivado)}</span>
+              <span className="field-label font-semibold text-gray-800">Block Flag Ativado:</span>
+              <span className="field-value ml-2 text-gray-800">{formatarResposta(dados.blockFlagAtivado)}</span>
             </div>
             <div className="field">
-              <span className="field-label font-semibold">Aberto PRMS:</span>
-              <span className="field-value ml-2">{formatarResposta(dados.abertoPRMS)}</span>
+              <span className="field-label font-semibold text-gray-800">Aberto PRMS:</span>
+              <span className="field-value ml-2 text-gray-800">{formatarResposta(dados.abertoPRMS)}</span>
             </div>
           </div>
         </div>
@@ -238,8 +238,8 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
             RECLAMAÇÃO DO CLIENTE
           </h3>
           <div className="field mb-3">
-            <span className="field-label font-semibold">Descrição:</span>
-            <div className="field-value ml-2 mt-1 p-3 bg-gray-50 rounded border">
+            <span className="field-label font-semibold text-gray-800">Descrição:</span>
+            <div className="field-value ml-2 mt-1 p-3 bg-gray-50 rounded border text-gray-800">
               {dados.reclamacaoDescricao || 'Não informado'}
             </div>
           </div>
@@ -255,8 +255,8 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
             <div key={index} className="step mb-4 p-4 bg-gray-50 rounded border">
               <div className="step-title font-bold text-blue-600 mb-2">Passo {index + 1}</div>
               <div className="field mb-2">
-                <span className="field-label font-semibold">Descrição:</span>
-                <div className="field-value ml-2 mt-1">
+                <span className="field-label font-semibold text-gray-800">Descrição:</span>
+                <div className="field-value ml-2 mt-1 text-gray-800">
                   {passo.descricao || 'Não informado'}
                 </div>
               </div>
@@ -271,20 +271,20 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
             CAUSA DO PROBLEMA
           </h3>
           <div className="field mb-3">
-            <span className="field-label font-semibold">Descrição:</span>
-            <div className="field-value ml-2 mt-1 p-3 bg-gray-50 rounded border">
+            <span className="field-label font-semibold text-gray-800">Descrição:</span>
+            <div className="field-value ml-2 mt-1 p-3 bg-gray-50 rounded border text-gray-800">
               {dados.causaDescricao || 'Não informado'}
             </div>
           </div>
           <ExibirImagensMultiplas files={dados.fotosCausa} titulo="Fotos da Causa" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div className="field">
-              <span className="field-label font-semibold">Número da Peça Causadora:</span>
-              <span className="field-value ml-2">{dados.numeroPecaCausadora}</span>
+              <span className="field-label font-semibold text-gray-800">Número da Peça Causadora:</span>
+              <span className="field-value ml-2 text-gray-800">{dados.numeroPecaCausadora}</span>
             </div>
             <div className="field">
-              <span className="field-label font-semibold">Descrição da Peça Causadora:</span>
-              <span className="field-value ml-2">{dados.descricaoPecaCausadora}</span>
+              <span className="field-label font-semibold text-gray-800">Descrição da Peça Causadora:</span>
+              <span className="field-value ml-2 text-gray-800">{dados.descricaoPecaCausadora}</span>
             </div>
           </div>
         </div>
@@ -295,8 +295,8 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
             CORREÇÃO
           </h3>
           <div className="field">
-            <span className="field-label font-semibold">Descrição:</span>
-            <div className="field-value ml-2 mt-1 p-3 bg-gray-50 rounded border">
+            <span className="field-label font-semibold text-gray-800">Descrição:</span>
+            <div className="field-value ml-2 mt-1 p-3 bg-gray-50 rounded border text-gray-800">
               {dados.correcaoDescricao || 'Não informado'}
             </div>
           </div>
@@ -316,7 +316,7 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
         </div>
 
         {/* Rodapé */}
-        <div className="mt-8 pt-6 border-t-2 border-gray-300 text-center text-gray-600">
+        <div className="mt-8 pt-6 border-t-2 border-gray-300 text-center text-gray-800">
           <p>Laudo gerado automaticamente pelo Sistema de Laudo Técnico</p>
           <p>Data: {new Date().toLocaleDateString('pt-BR')} - Hora: {new Date().toLocaleTimeString('pt-BR')}</p>
         </div>
