@@ -92,10 +92,40 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
 
       <div id="laudo-content" className="p-8 bg-white border border-gray-200 rounded-lg">
         {/* Cabeçalho */}
-        <div className="header text-center mb-8 pb-6 border-b-2 border-gray-300">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">LAUDO TÉCNICO</h1>
-          <h2 className="text-xl text-gray-800">{gerarNomeLaudo()}</h2>
-          <p className="text-gray-800 mt-2">Data de Geração: {new Date().toLocaleDateString('pt-BR')}</p>
+        <div className="header mb-8 pb-6 border-b-2 border-gray-300">
+          <div className="flex items-center justify-between mb-4">
+            {/* Logo Stuttgart à esquerda */}
+            <div className="flex-shrink-0">
+              <Image 
+                src="/stuttgart-logo.jpeg" 
+                alt="Stuttgart Logo"
+                width={436}
+                height={115}
+                className="h-20 max-w-60 object-contain"
+              />
+            </div>
+            
+            {/* Título centralizado */}
+            <div className="flex-1 text-center">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">LAUDO TÉCNICO</h1>
+              <h2 className="text-xl text-gray-800">{gerarNomeLaudo()}</h2>
+            </div>
+            
+            {/* Logo Porsche à direita */}
+            <div className="flex-shrink-0">
+              <Image 
+                src="/porsche-logo.jpeg" 
+                alt="Porsche Logo"
+                width={600}
+                height={115}
+                className="h-20 max-w-60 object-contain"
+              />
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-gray-800 mt-2">Data de Geração: {new Date().toLocaleDateString('pt-BR')}</p>
+          </div>
         </div>
 
         {/* Identificação */}

@@ -54,6 +54,45 @@ body {
     padding: 0 !important;
   }
   
+  /* Estilos para o cabeçalho com logos */
+  .header {
+    margin-bottom: 20pt;
+    border-bottom: 2pt solid #333 !important;
+    padding-bottom: 15pt;
+  }
+  
+  /* Garantir que os logos apareçam na impressão */
+  .header img {
+    max-height: 60pt !important;
+    width: auto !important;
+    object-fit: contain !important;
+  }
+  
+  /* Layout flexbox para impressão */
+  .flex {
+    display: flex !important;
+  }
+  
+  .items-center {
+    align-items: center !important;
+  }
+  
+  .justify-between {
+    justify-content: space-between !important;
+  }
+  
+  .flex-1 {
+    flex: 1 !important;
+  }
+  
+  .flex-shrink-0 {
+    flex-shrink: 0 !important;
+  }
+  
+  .text-center {
+    text-align: center !important;
+  }
+  
   /* Estilos para títulos e seções */
   .section-title {
     color: #1f2937 !important;
@@ -75,8 +114,8 @@ body {
     color: #1f2937 !important;
   }
   
-  /* Estilos para imagens */
-  img {
+  /* Estilos para imagens do conteúdo */
+  .section img {
     max-width: 200pt !important;
     height: auto !important;
     page-break-inside: avoid;
@@ -101,14 +140,6 @@ body {
   .step-title {
     color: #007bff !important;
     font-weight: bold !important;
-  }
-  
-  /* Estilos para o cabeçalho */
-  .header {
-    text-align: center;
-    margin-bottom: 20pt;
-    border-bottom: 2pt solid #333 !important;
-    padding-bottom: 15pt;
   }
   
   /* Estilos para áreas de texto */
