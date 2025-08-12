@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { DadosLaudo } from '../page';
 import Image from 'next/image';
 
@@ -21,18 +22,32 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
 
   // Componente para exibir imagem única
   const ExibirImagemUnica = ({ file, titulo }: { file: File | null, titulo: string }) => {
-    if (!file) return null;
-    
+    const [imgUrl, setImgUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+      if (!file) {
+        setImgUrl(null);
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      setImgUrl(url);
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }, [file]);
+
+    if (!file || !imgUrl) return null;
+
     return (
       <div className="mt-2">
         <p className="text-sm font-medium text-gray-800 mb-1">{titulo}:</p>
-        <Image 
-          src={URL.createObjectURL(file)} 
+        <img
+          src={imgUrl}
           alt={titulo}
           width={300}
           height={200}
           className="max-w-xs h-auto rounded border border-gray-300"
-          unoptimized
+          style={{ maxWidth: '300px', height: 'auto' }}
         />
       </div>
     );
@@ -40,21 +55,35 @@ export function LaudoGerado({ dados, onVoltar }: Props) {
 
   // Componente para exibir múltiplas imagens
   const ExibirImagensMultiplas = ({ files, titulo }: { files: File[], titulo: string }) => {
-    if (files.length === 0) return null;
-    
+    const [imgUrls, setImgUrls] = useState<string[]>([]);
+
+    useEffect(() => {
+      if (!files || files.length === 0) {
+        setImgUrls([]);
+        return;
+      }
+      const urls = files.map(file => URL.createObjectURL(file));
+      setImgUrls(urls);
+      return () => {
+        urls.forEach(url => URL.revokeObjectURL(url));
+      };
+    }, [files]);
+
+    if (!files || files.length === 0 || imgUrls.length === 0) return null;
+
     return (
       <div className="mt-2">
         <p className="text-sm font-medium text-gray-800 mb-2">{titulo}:</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {files.map((file, index) => (
-            <Image 
+          {imgUrls.map((url, index) => (
+            <img
               key={index}
-              src={URL.createObjectURL(file)} 
+              src={url}
               alt={`${titulo} ${index + 1}`}
               width={200}
               height={128}
               className="w-full h-32 object-cover rounded border border-gray-300"
-              unoptimized
+              style={{ width: '100%', height: '128px', objectFit: 'cover' }}
             />
           ))}
         </div>

@@ -30,50 +30,14 @@ body {
   /* Remover margens padrão do navegador */
   * {
     -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   
-  /* Esconder cabeçalho e rodapé do navegador */
   @page {
     margin: 1.5cm 1cm 1cm 1cm;
     size: A4;
   }
   
-  /* ESCONDER COMPLETAMENTE os elementos do topo */
-  body > div > header,
-  body > div > main > div:first-child,
-  .min-h-screen > header,
-  .min-h-screen > main > *:not([id="laudo-content"]):not(:has(#laudo-content)),
-  header,
-  nav,
-  .print\\:hidden,
-  [class*="Sistema"],
-  [class*="header"],
-  .bg-white.shadow-sm,
-  .border-b,
-  h1:contains("Sistema de Laudo Técnico"),
-  .text-2xl.font-bold.text-gray-900 {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  
-  /* Esconder especificamente os botões e título da página */
-  .flex.justify-between.items-center.mb-6,
-  .bg-gray-50.rounded-lg,
-  h2:contains("Laudo Técnico Gerado"),
-  button,
-  .space-x-3 {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-  }
-  
-  /* Remover qualquer padding/margin do body */
   body {
     background: white !important;
     color: #1f2937 !important;
@@ -83,7 +47,6 @@ body {
     padding: 0 !important;
   }
   
-  /* Mostrar APENAS o conteúdo do laudo */
   #laudo-content {
     background: white !important;
     border: none !important;
@@ -95,25 +58,6 @@ body {
     position: relative !important;
     top: 0 !important;
     left: 0 !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  /* Garantir que apenas o laudo seja visível */
-  body > * {
-    display: none !important;
-  }
-  
-  body > div:has(#laudo-content) {
-    display: block !important;
-  }
-  
-  #laudo-content,
-  #laudo-content * {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
   }
   
   /* Estilos para o cabeçalho com logos - ajustado para margens */
@@ -123,7 +67,6 @@ body {
     border-bottom: 1.5pt solid #333 !important;
     padding-bottom: 10pt !important;
     page-break-inside: avoid !important;
-    display: block !important;
   }
   
   /* Garantir que os logos apareçam na impressão com tamanho adequado */
@@ -133,7 +76,6 @@ body {
     width: auto !important;
     height: auto !important;
     object-fit: contain !important;
-    display: block !important;
   }
   
   /* Layout flexbox para impressão */
@@ -168,7 +110,6 @@ body {
     color: #1f2937 !important;
     margin: 0 !important;
     padding: 0 5pt !important;
-    display: block !important;
   }
   
   #laudo-content .header h2 {
@@ -177,14 +118,12 @@ body {
     color: #1f2937 !important;
     margin: 5pt 0 0 0 !important;
     padding: 0 5pt !important;
-    display: block !important;
   }
   
   #laudo-content .header p {
     font-size: 10pt !important;
     color: #1f2937 !important;
     margin: 5pt 0 0 0 !important;
-    display: block !important;
   }
   
   /* Estilos para títulos e seções */
@@ -197,7 +136,6 @@ body {
     border-left: 3pt solid #007bff !important;
     padding-left: 6pt !important;
     page-break-after: avoid !important;
-    display: block !important;
   }
   
   /* Estilos para campos */
@@ -221,7 +159,6 @@ body {
     page-break-inside: avoid !important;
     margin: 3pt !important;
     border: 0.5pt solid #ddd !important;
-    display: block !important;
   }
   
   /* Evitar quebras de página em elementos importantes */
@@ -230,7 +167,6 @@ body {
   #laudo-content .field {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    display: block !important;
   }
   
   /* Estilos para passos do diagnóstico */
@@ -240,14 +176,12 @@ body {
     padding: 6pt !important;
     margin-bottom: 8pt !important;
     page-break-inside: avoid !important;
-    display: block !important;
   }
   
   #laudo-content .step-title {
     color: #007bff !important;
     font-weight: bold !important;
     font-size: 11pt !important;
-    display: block !important;
   }
   
   /* Estilos para áreas de texto */
@@ -255,7 +189,6 @@ body {
     background: #f8f9fa !important;
     border: 0.5pt solid #ddd !important;
     padding: 6pt !important;
-    display: block !important;
   }
   
   /* Grid para impressão */
@@ -274,7 +207,6 @@ body {
   /* Garantir que o conteúdo não saia das margens */
   #laudo-content .section {
     margin-bottom: 12pt !important;
-    display: block !important;
   }
   
   /* Estilos específicos para o container de logos */
@@ -287,7 +219,6 @@ body {
   /* Ajustar espaçamento do título central */
   #laudo-content .header .flex-1 {
     padding: 0 10pt !important;
-    display: block !important;
   }
   
   /* Garantir que divs importantes sejam exibidas */
